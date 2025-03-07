@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安市中心城区生态系统服务供需失配风险评估与绿色空间优化数据库</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>西安市中心城区生态系统服务供需失配风险评估与绿色空间优化数据库</h1>
+        <div class="controls">
+            <select id="scale-selector">
+                <option value="city">城市尺度</option>
+                <option value="unit">单元尺度</option>
+            </select>
+            <input type="text" id="search-input" placeholder="搜索单元编号或地址...">
+            <button id="search-btn">搜索</button>
+        </div>
+    </header>
+    
+    <main>
+        <div id="map-container">
+            <div id="map"></div>
+            <div class="map-info">
+                <div class="north-arrow">N</div>
+                <div class="scale-bar">1千米</div>
+                <div class="attribution">© 2023 Mapbox © OpenStreetMap</div>
+            </div>
+        </div>
+        
+        <div id="data-panel">
+            <div class="panel-header">
+                <h2 id="selected-unit-title">请选择区域</h2>
+                <div class="panel-tabs">
+                    <button class="tab-btn active" data-tab="characteristics">单元特征</button>
+                    <button class="tab-btn" data-tab="risk">风险评估</button>
+                    <button class="tab-btn" data-tab="control">管控指标</button>
+                    <button class="tab-btn" data-tab="optimization">优化策略</button>
+                </div>
+            </div>
+            
+            <div class="tab-content active" id="characteristics-tab">
+                <h3>单元基础特征</h3>
+                <div class="data-section">
+                    <div class="data-row">
+                        <span class="label">单元编号:</span>
+                        <span class="value" id="unit-id">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">面积(ha):</span>
+                        <span class="value" id="unit-area">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">人口(万):</span>
+                        <span class="value" id="unit-population">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">绿地面积(ha):</span>
+                        <span class="value" id="green-area">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">人均绿地面积(㎡):</span>
+                        <span class="value" id="green-per-capita">-</span>
+                    </div>
+                </div>
+                
+                <h3>规模特征</h3>
+                <div class="chart-container">
+                    <canvas id="size-chart"></canvas>
+                </div>
+                
+                <h3>人口特征</h3>
+                <div class="chart-container">
+                    <canvas id="population-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="risk-tab">
+                <h3>风险评估</h3>
+                <div class="risk-summary">
+                    <div class="risk-type">
+                        <span class="label">风险类型:</span>
+                        <span class="value" id="risk-type">-</span>
+                    </div>
+                    <div class="risk-level">
+                        <span class="label">综合风险等级:</span>
+                        <span class="value" id="risk-level">-</span>
+                    </div>
+                </div>
+                
+                <h3>分项风险评估</h3>
+                <div class="chart-container">
+                    <canvas id="risk-chart"></canvas>
+                </div>
+                
+                <h3>供需匹配分析</h3>
+                <div class="chart-container">
+                    <canvas id="supply-demand-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="control-tab">
+                <h3>管控指标</h3>
+                <div class="control-indicators">
+                    <table class="control-table">
+                        <thead>
+                            <tr>
+                                <th>指标类型</th>
+                                <th>控制值</th>
+                                <th>现状值</th>
+                                <th>差距</th>
+                            </tr>
+                        </thead>
+                        <tbody id="control-indicators-body">
+                            <tr>
+                                <td>绿地率(%)</td>
+                                <td id="green-ratio-target">-</td>
+                                <td id="green-ratio-current">-</td>
+                                <td id="green-ratio-gap">-</td>
+                            </tr>
+                            <tr>
+                                <td>公园绿地覆盖率(%)</td>
+                                <td id="park-coverage-target">-</td>
+                                <td id="park-coverage-current">-</td>
+                                <td id="park-coverage-gap">-</td>
+                            </tr>
+                            <tr>
+                                <td>生态网络连通度</td>
+                                <td id="connectivity-target">-</td>
+                                <td id="connectivity-current">-</td>
+                                <td id="connectivity-gap">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3>结构修复要求</h3>
+                <div class="structure-requirements" id="structure-requirements">
+                    暂无数据
+                </div>
+            </div>
+            
+            <div class="tab-content" id="optimization-tab">
+                <h3>优化策略</h3>
+                <div class="strategy-summary" id="strategy-summary">
+                    暂无数据
+                </div>
+                
+                <h3>优化效果预估</h3>
+                <div class="chart-container">
+                    <canvas id="optimization-effect-chart"></canvas>
+                </div>
+                
+                <div class="strategy-image">
+                    <h3>优化策略示意</h3>
+                    <div class="image-placeholder" id="strategy-image">
+                        <div class="no-image-message">选择区域后显示策略示意图</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
